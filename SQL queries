@@ -1,0 +1,77 @@
+SELECT 
+    month_name, 
+    year, 
+    carrier_name,
+    (carrier+Late_Aircraft+National_Aviation+Security+Weather) AS total_delays
+FROM 
+    airportdata
+WHERE 
+    (carrier+Late_Aircraft+National_Aviation+Security+Weather) = 
+    (SELECT 
+        MAX(carrier+Late_Aircraft+National_Aviation+Security+Weather) AS max_delays
+     FROM 
+        airportdata AS a
+     WHERE 
+        a.month = airportdata.month
+        AND a.year = airportdata.year
+    );
+
+    -----------------------------------------------------------------------------------
+    SELECT 
+    month_name, 
+    year,
+    code, 
+    name, 
+    ( Carrier_late+Late_air+NAS+Security_late+Weather_late) AS total_minutes_delayed
+FROM 
+    airportdata
+WHERE 
+    (Carrier_late+Late_air+NAS+Security_late+Weather_late) = 
+    (SELECT 
+        MAX(Carrier_late+Late_air+NAS+Security_late+Weather_late) AS max_minutes_delayed
+     FROM 
+        airportdata AS a
+     WHERE 
+        a.month = airportdata.month AND
+        a.year = airportdata.year
+    );
+
+----------------------------------------------------------------------
+ SELECT 
+    month_name, 
+    year,
+    code, 
+    name, 
+    (total) AS total_minutes_delayed
+FROM 
+    airportdata
+WHERE 
+    (total) = 
+    (SELECT 
+        MAX(total) AS max_minutes_delayed
+     FROM 
+        airportdata AS a
+     WHERE 
+        a.month = airportdata.month AND
+        a.year = airportdata.year
+    );
+    ---------------------------------------------
+SELECT 
+    code, 
+    name,
+    SUM(on_time) AS airports_on_time
+FROM 
+    airportdata
+GROUP BY 
+     code,
+     name
+     
+ORDER BY 
+    airports_on_time DESC
+LIMIT 6;
+-------------------------
+SELECT
+    SUM(Carrier_late+Late_air+NAS+Security_late+Weather_late) AS total_delays
+FROM
+   airportdata;
+
