@@ -1,0 +1,40 @@
+create or replace database airlines_data;
+
+use database airlines_data;
+
+
+
+CREATE OR REPLACE STAGE my_stage
+URL = 's3://jsonairlines/airlines.json'
+CREDENTIALS = (AWS_KEY_ID = 'AKIA2CQ223ZV4IUU754T' AWS_SECRET_KEY = 'mLvmCkNI7CbY1Q1u0C5Tu5IPC4xjiAF0fXb/6mv7');
+
+LIST @my_stage;
+
+CREATE OR REPLACE TABLE raw_staging (
+  airlines VARIANT
+);
+
+select * FROM raw_staging;
+
+
+COPY INTO raw_staging
+FROM @my_stage
+FILE_FORMAT = (TYPE = 'JSON');
+
+
+
+
+CREATE OR REPLACE TABLE raw_tbl (
+  air VARIANT
+);
+
+INSERT INTO raw_tbl (air)
+SELECT VALUE airlines
+FROM raw_staging,
+LATERAL FLATTEN(input => parse_json(raw_staging.airlines));
+
+select * FROM raw_tbl;
+
+
+
+
