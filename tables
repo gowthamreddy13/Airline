@@ -1,0 +1,209 @@
+
+
+CREATE OR REPLACE TABLE airport (
+    code STRING PRIMARY KEY,
+    name STRING
+);
+
+
+
+INSERT INTO airport (code, name)
+SELECT 
+      air:Airport: Code::STRING, 
+      air:Airport:Name::STRING
+FROM raw_tbl;
+
+SELECT * FROM  airport;
+
+
+
+
+CREATE OR REPLACE TABLE time (
+    code STRING PRIMARY KEY,
+    label STRING,
+    month INT,
+    month_name STRING,
+    year INT
+);
+
+
+INSERT INTO time(code, label, month, month_name, year)
+SELECT  
+     air:Airport: Code::STRING, 
+     air:Time:Label::STRING, 
+     air:Time:Month::INT, 
+     air:Time:"Month Name"::STRING, 
+     air:Time:Year::INT
+FROM raw_tbl;
+
+select * FROM time;
+
+
+CREATE OR REPLACE TABLE stastics (
+    CODE STRING PRIMARY KEY,
+    carrier INT,
+    Late_Aircraft INT,
+    National_Aviation INT,
+    Security INT,
+    Weather INT
+);
+
+INSERT INTO stastics(CODE, carrier, Late_Aircraft, National_Aviation, Security, Weather)
+SELECT 
+    air:Airport: Code::STRING, 
+    air:Statistics:"# of Delays": Carrier::int,  
+    air:Statistics:"# of Delays":"Late Aircraft":: INT,  
+    air:Statistics:"# of Delays":"National Aviation System"::INT,  
+    air:Statistics:"# of Delays":"Security"::INT,  
+    air:Statistics:"# of Delays":Weather::INT
+FROM raw_tbl;
+
+SELECT * FROM stastics;
+
+
+
+CREATE OR REPLACE TABLE carriers (
+    code STRING PRIMARY KEY,
+    carrier_name STRING,
+    total_carriers INT 
+);
+INSERT INTO carriers
+SELECT 
+        air:Airport: Code::STRING, 
+        air:Statistics:Carriers:Names::STRING, 
+        air:Statistics:Carriers:Total::INT
+FROM raw_tbl;
+SELECT * FROM carriers;
+
+
+CREATE OR REPLACE TABLE flight_status (
+    code STRING PRIMARY KEY,
+    cancelled INT,
+    Delayed INT,
+    Diverted INT,
+    On_Time INT,
+    Total_flights INT
+);
+INSERT INTO flight_status(code, cancelled, delayed, diverted, on_time, total_flights)
+SELECT 
+       air:Airport: Code::STRING, 
+       air:Statistics:Flights:Cancelled::INT, 
+       air:Statistics:Flights:Delayed::INT, 
+       air:Statistics:Flights:Diverted::INT, 
+       air:Statistics:Flights:"On Time"::INT, 
+       air:Statistics:Flights:Total::INT
+FROM raw_tbl;
+
+SELECT * FROM flight_status;
+
+
+CREATE OR REPLACE TABLE minutes_delayed (
+    code STRING PRIMARY KEY,
+    Carrier INT,
+    Late_Aircraft INT,
+    NAS INT,
+    Security INT,
+    Weather INT,
+    Total INT
+);
+
+INSERT INTO minutes_delayed(code, carrier, LAte_aircraft, NAS,SECurity, Weather, Total)
+SELECT 
+        air:Airport: Code::STRING, 
+        air:Statistics:"Minutes Delayed":Carrier::INT, 
+        air:Statistics:"Minutes Delayed":"Late Aircraft"::INT, 
+        air:Statistics:"Minutes Delayed":"National Aviation System"::INT, 
+        air:Statistics:"Minutes Delayed":Security::INT, 
+        air:Statistics:"Minutes Delayed":Weather::INT, 
+        air:Statistics:"Minutes Delayed":Total::INT
+FROM raw_tbl;
+SELECT * FROM minutes_delayed;
+
+
+
+Create or replace table airportdata (
+          code STRING PRIMARY KEY,
+          name STRING,
+          label STRING,
+          month INT,
+          month_name STRING,
+          year INT,
+          carrier INT,
+          Late_Aircraft INT,
+          National_Aviation INT,
+          Security INT,
+          Weather INT,
+          carrier_name STRING,
+          total_carriers INT,
+          cancelled INT,
+          Delayed INT,
+          Diverted INT,
+          On_Time INT,
+          Total_flights INT,
+          Carrier_late INT,
+          Late_air INT,
+          NAS INT,
+          Security_late INT,
+          Weather_late INT,
+          Total INT
+);
+
+INSERT INTO airportdata (code,name,label,
+          month ,
+          month_name ,
+          year,
+          carrier,
+          Late_Aircraft,
+          National_Aviation,
+          Security,
+          Weather,
+          carrier_name,
+          total_carriers,
+          cancelled,
+          Delayed ,
+          Diverted ,
+          On_Time ,
+          Total_flights,
+          Carrier_late,
+          Late_air,
+          NAS ,
+          Security_late,
+          Weather_late ,
+          Total )
+select air:Airport: Code::STRING,
+       air:Airport:Name::STRING,
+       air:Time:Label::STRING, 
+       air:Time:Month::INT, 
+       air:Time:"Month Name"::STRING, 
+       air:Time:Year::INT,
+       
+       air:Statistics:"# of Delays": Carrier::int,  
+       air:Statistics:"# of Delays":"Late Aircraft":: INT,  
+       air:Statistics:"# of Delays":"National Aviation System"::INT,  
+       air:Statistics:"# of Delays":"Security"::INT,  
+       air:Statistics:"# of Delays":Weather::INT,
+       air:Statistics:Carriers:Names::STRING, 
+       air:Statistics:Carriers:Total::INT,
+       
+       air:Statistics:Flights:Cancelled::INT, 
+       air:Statistics:Flights:Delayed::INT, 
+       air:Statistics:Flights:Diverted::INT, 
+       air:Statistics:Flights:"On Time"::INT, 
+       air:Statistics:Flights:Total::INT,
+       air:Statistics:"Minutes Delayed":Carrier::INT, 
+        air:Statistics:"Minutes Delayed":"Late Aircraft"::INT, 
+        air:Statistics:"Minutes Delayed":"National Aviation System"::INT, 
+        air:Statistics:"Minutes Delayed":Security::INT, 
+        air:Statistics:"Minutes Delayed":Weather::INT, 
+        air:Statistics:"Minutes Delayed":Total::INT
+FROM raw_tbl;      
+       
+
+
+SELECT * FROM airportdata
+ORDER BY CODE;
+
+
+
+
+
